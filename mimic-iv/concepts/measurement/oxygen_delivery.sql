@@ -1,3 +1,4 @@
+CREATE TABLE oxygen_deliver AS
 WITH ce_stg1 AS (
     SELECT
         ce.subject_id
@@ -11,7 +12,7 @@ WITH ce_stg1 AS (
         , valuenum
         , valueuom
         , storetime
-    FROM `physionet-data.mimiciv_icu.chartevents` ce
+    FROM `chartevents` ce
     WHERE ce.value IS NOT NULL
         AND ce.itemid IN
         (
@@ -64,7 +65,7 @@ WITH ce_stg1 AS (
         , ROW_NUMBER() OVER (
             PARTITION BY subject_id, charttime, itemid ORDER BY value
         ) AS rn
-    FROM `physionet-data.mimiciv_icu.chartevents`
+    FROM `chartevents`
     WHERE itemid = 226732 -- oxygen delivery device(s)
 )
 

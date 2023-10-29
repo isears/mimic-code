@@ -2,6 +2,7 @@
 -- excludes point of care tests (very rare)
 -- blood gas measurements are *not* included in this query
 -- instead they are in bg.sql
+CREATE TABLE chemistry AS
 SELECT
     MAX(subject_id) AS subject_id
     , MAX(hadm_id) AS hadm_id
@@ -54,7 +55,7 @@ SELECT
     , MAX(
         CASE WHEN itemid = 50971 AND valuenum <= 30 THEN valuenum ELSE NULL END
     ) AS potassium
-FROM `physionet-data.mimiciv_hosp.labevents` le
+FROM `labevents` le
 WHERE le.itemid IN
     (
         -- comment is: LABEL | CATEGORY | FLUID | NUMBER OF ROWS IN LABEVENTS

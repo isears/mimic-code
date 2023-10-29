@@ -1,3 +1,4 @@
+CREATE TABLE inflammation AS
 SELECT
     MAX(subject_id) AS subject_id
     , MAX(hadm_id) AS hadm_id
@@ -5,7 +6,7 @@ SELECT
     , le.specimen_id
     -- convert from itemid into a meaningful column
     , MAX(CASE WHEN itemid = 50889 THEN valuenum ELSE NULL END) AS crp
-FROM `physionet-data.mimiciv_hosp.labevents` le
+FROM `labevents` le
 WHERE le.itemid IN
     (
         -- 51652 -- high sensitivity CRP

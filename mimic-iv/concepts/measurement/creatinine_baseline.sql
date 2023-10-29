@@ -8,6 +8,7 @@
 --          although it may be rather large.
 --     iii. Otherwise, we estimate the baseline using Simplified MDRD:
 --          eGFR = 186 × Scr^(-1.154) × Age^(-0.203) × 0.742Female
+CREATE TABLE creatinine_baseline AS
 WITH p AS (
     SELECT
         ag.subject_id

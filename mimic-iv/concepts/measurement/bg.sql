@@ -1,5 +1,6 @@
 -- The aim of this query is to pivot entries related to blood gases
 -- which were found in LABEVENTS
+CREATE TABLE bloodgas AS
 WITH bg AS (
     SELECT
         -- specimen_id only ever has 1 measurement for each itemid
@@ -79,7 +80,7 @@ WITH bg AS (
             CASE WHEN itemid = 50825 THEN valuenum ELSE NULL END
         ) AS temperature
         , MAX(CASE WHEN itemid = 50807 THEN value ELSE NULL END) AS comments
-    FROM `physionet-data.mimiciv_hosp.labevents` le
+    FROM `labevents` le
     WHERE le.itemid IN
         -- blood gases
         (
@@ -119,7 +120,7 @@ WITH bg AS (
     SELECT subject_id, charttime
         -- avg here is just used to group SpO2 by charttime
         , AVG(valuenum) AS spo2
-    FROM `physionet-data.mimiciv_icu.chartevents`
+    FROM `chartevents`
     WHERE itemid = 220277 -- O2 saturation pulseoxymetry
         AND valuenum > 0 AND valuenum <= 100
     GROUP BY subject_id, charttime
@@ -139,7 +140,7 @@ WITH bg AS (
                     THEN valuenum
                 ELSE NULL END
         ) AS fio2_chartevents
-    FROM `physionet-data.mimiciv_icu.chartevents`
+    FROM `chartevents`
     WHERE itemid = 223835 -- Inspired O2 Fraction (FiO2)
         AND valuenum > 0 AND valuenum <= 100
     GROUP BY subject_id, charttime
@@ -157,7 +158,7 @@ WITH bg AS (
         ON bg.subject_id = s1.subject_id
             -- spo2 occurred at most 2 hours before this blood gas
             AND s1.charttime
-            BETWEEN DATETIME_SUB(bg.charttime, INTERVAL '2' HOUR)
+            BETWEEN DATE_SUB(bg.charttime, INTERVAL '2' HOUR)
             AND bg.charttime
     WHERE bg.po2 IS NOT NULL
 )
@@ -173,7 +174,7 @@ WITH bg AS (
         -- same patient
         ON bg.subject_id = s2.subject_id
             -- fio2 occurred at most 4 hours before this blood gas
-            AND s2.charttime >= DATETIME_SUB(bg.charttime, INTERVAL '4' HOUR)
+            AND s2.charttime >= DATE_SUB(bg.charttime, INTERVAL '4' HOUR)
             AND s2.charttime <= bg.charttime
             AND s2.fio2_chartevents > 0
     -- only the row with the most recent SpO2 (if no SpO2 found lastRowSpO2 = 1)

@@ -1,3 +1,4 @@
+CREATE TABLE icp AS
 WITH ce AS (
     SELECT
         ce.subject_id
@@ -7,7 +8,7 @@ WITH ce AS (
         , CASE
             WHEN valuenum > 0 AND valuenum < 100 THEN valuenum ELSE null
         END AS icp
-    FROM `physionet-data.mimiciv_icu.chartevents` ce
+    FROM `chartevents` ce
     -- exclude rows marked as error
     WHERE ce.itemid IN
         (

@@ -21,6 +21,7 @@
 --    For sedated patients, the Glasgow Coma Score before sedation was used.
 --    This was ascertained either from interviewing the physician who ordered
 --    the sedation, or by reviewing the patient's medical record.
+CREATE TABLE gcs AS
 WITH base AS (
     SELECT
         subject_id
@@ -47,7 +48,7 @@ WITH base AS (
         AS endotrachflag
         , ROW_NUMBER()
         OVER (PARTITION BY ce.stay_id ORDER BY ce.charttime ASC) AS rn
-    FROM `physionet-data.mimiciv_icu.chartevents` ce
+    FROM `chartevents` ce
     -- Isolate the desired GCS variables
     WHERE ce.itemid IN
         (

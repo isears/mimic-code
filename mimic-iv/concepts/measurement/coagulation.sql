@@ -1,3 +1,4 @@
+CREATE TABLE coagulation AS
 SELECT
     MAX(subject_id) AS subject_id
     , MAX(hadm_id) AS hadm_id
@@ -10,7 +11,8 @@ SELECT
     , MAX(CASE WHEN itemid = 51237 THEN valuenum ELSE NULL END) AS inr
     , MAX(CASE WHEN itemid = 51274 THEN valuenum ELSE NULL END) AS pt
     , MAX(CASE WHEN itemid = 51275 THEN valuenum ELSE NULL END) AS ptt
-FROM `physionet-data.mimiciv_hosp.labevents` le
+-- INTO coagulation
+FROM `labevents` le
 WHERE le.itemid IN
     (
         -- Bleeding Time, no data as of MIMIC-IV v0.4
